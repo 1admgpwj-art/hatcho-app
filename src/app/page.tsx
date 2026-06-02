@@ -13,7 +13,7 @@ export default function LandingPage() {
             帳票くん
           </div>
           <div className="flex gap-3">
-            <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10" asChild>
+            <Button variant="outline" className="border-white/40 text-white hover:bg-white/10 hover:text-white" asChild>
               <Link href="/login">ログイン</Link>
             </Button>
             <Button className="bg-blue-500 hover:bg-blue-400" asChild>
@@ -128,7 +128,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="border-t border-white/10 py-8 text-center text-slate-400 text-sm">
-        © 2024 帳票くん. All rights reserved.
+        © 2026 帳票くん. All rights reserved.
       </footer>
     </div>
   )
