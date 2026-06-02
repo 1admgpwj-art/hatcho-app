@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Plus, Users } from "lucide-react"
+import type { Client } from "@prisma/client"
 
 export default async function ClientsPage() {
   const session = await auth()
@@ -43,7 +44,7 @@ export default async function ClientsPage() {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {clients.map((c) => (
+              {clients.map((c: Client) => (
                 <tr key={c.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-4 py-3 font-medium text-slate-800">{c.name}</td>
                   <td className="px-4 py-3 text-slate-500">{c.contactPerson ?? "-"}</td>
