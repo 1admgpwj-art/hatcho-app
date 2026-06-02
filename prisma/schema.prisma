@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum UserRole {
+  OWNER
+  MEMBER
+}
+
+enum DocumentStatus {
+  DRAFT
+  SENT
+  APPROVED
+  COMPLETED
+}
+
+model Company {
+  id                        String  @id @default(cuid())
+  name                      String
+  postalCode                String?
+  address                   String?
+  phone                     String?
+  fax                       String?
+  email                     String?
+  bankInfo                  String?
+  sealImageUrl              String?
+  invoiceRegistrationNumber String?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  users      User[]
+  clients    Client[]
+  quotes     Quote[]
+  deliveries Delivery[]
+  invoices   Invoice[]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  companyId    String
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(MEMBER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  company    Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  quotes     Quote[]
+  deliveries Delivery[]
+  invoices   Invoice[]
+}
+
+model Client {
+  id            String   @id @default(cuid())
+  companyId     String
+  name          String
+  postalCode    String?
+  address       String?
+  phone         String?
+  email         String?
+  contactPerson String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  company    Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  quotes     Quote[]
+  deliveries Delivery[]
+  invoices   Invoice[]
+}
+
+model Quote {
+  id          String         @id @default(cuid())
+  companyId   String
+  clientId    String
+  createdById String
+  quoteNumber String
+  title       String
+  issueDate   DateTime
+  expiryDate  DateTime?
+  subtotal    Int            @default(0)
+  taxAmount   Int            @default(0)
+  total       Int            @default(0)
+  taxRate     Int            @default(10)
+  notes       String?
+  status      DocumentStatus @default(DRAFT)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  company    Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  client     Client          @relation(fields: [clientId], references: [id])
+  createdBy  User            @relation(fields: [createdById], references: [id])
+  lineItems  QuoteLineItem[]
+  deliveries Delivery[]
+
+  @@unique([companyId, quoteNumber])
+}
+
+model QuoteLineItem {
+  id          String @id @default(cuid())
+  quoteId     String
+  sortOrder   Int    @default(0)
+  description String
+  quantity    Float  @default(1)
+  unit        String @default("式")
+  unitPrice   Int    @default(0)
+  amount      Int    @default(0)
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+}
+
+model Delivery {
+  id             String         @id @default(cuid())
+  companyId      String
+  clientId       String
+  createdById    String
+  quoteId        String?
+  deliveryNumber String
+  title          String
+  issueDate      DateTime
+  deliveryDate   DateTime?
+  subtotal       Int            @default(0)
+  taxAmount      Int            @default(0)
+  total          Int            @default(0)
+  taxRate        Int            @default(10)
+  notes          String?
+  status         DocumentStatus @default(DRAFT)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  company   Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  client    Client             @relation(fields: [clientId], references: [id])
+  createdBy User               @relation(fields: [createdById], references: [id])
+  quote     Quote?             @relation(fields: [quoteId], references: [id])
+  lineItems DeliveryLineItem[]
+  invoices  Invoice[]
+
+  @@unique([companyId, deliveryNumber])
+}
+
+model DeliveryLineItem {
+  id          String @id @default(cuid())
+  deliveryId  String
+  sortOrder   Int    @default(0)
+  description String
+  quantity    Float  @default(1)
+  unit        String @default("式")
+  unitPrice   Int    @default(0)
+  amount      Int    @default(0)
+
+  delivery Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+}
+
+model Invoice {
+  id            String         @id @default(cuid())
+  companyId     String
+  clientId      String
+  createdById   String
+  deliveryId    String?
+  invoiceNumber String
+  title         String
+  issueDate     DateTime
+  dueDate       DateTime?
+  subtotal      Int            @default(0)
+  taxAmount     Int            @default(0)
+  total         Int            @default(0)
+  taxRate       Int            @default(10)
+  notes         String?
+  status        DocumentStatus @default(DRAFT)
+  isPaid        Boolean        @default(false)
+  paidAt        DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  company   Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  client    Client            @relation(fields: [clientId], references: [id])
+  createdBy User              @relation(fields: [createdById], references: [id])
+  delivery  Delivery?         @relation(fields: [deliveryId], references: [id])
+  lineItems InvoiceLineItem[]
+
+  @@unique([companyId, invoiceNumber])
+}
+
+model InvoiceLineItem {
+  id          String @id @default(cuid())
+  invoiceId   String
+  sortOrder   Int    @default(0)
+  description String
+  quantity    Float  @default(1)
+  unit        String @default("式")
+  unitPrice   Int    @default(0)
+  amount      Int    @default(0)
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+}
