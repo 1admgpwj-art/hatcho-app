@@ -33,8 +33,6 @@ yarn-error.log*
 prisma/dev.db
 *.db
 
-# fonts (large binary, system-specific)
-public/fonts/
 
 # vercel
 .vercel
