@@ -51,7 +51,7 @@ export default function LandingPage() {
       </section>
 
       {/* 漫画 */}
-      <section className="max-w-lg mx-auto px-6 pb-16">
+      <section className="max-w-3xl mx-auto px-6 pb-16">
         <img src="/manga.png" alt="帳票くんの使い方マンガ" className="w-full rounded-2xl shadow-2xl" />
       </section>
 
