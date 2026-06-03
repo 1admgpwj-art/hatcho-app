@@ -50,6 +50,11 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* 漫画 */}
+      <section className="max-w-lg mx-auto px-6 pb-16">
+        <img src="/manga.png" alt="帳票くんの使い方マンガ" className="w-full rounded-2xl shadow-2xl" />
+      </section>
+
       {/* 3ステップ */}
       <section className="max-w-6xl mx-auto px-6 py-20">
         <h2 className="text-3xl font-bold text-center mb-16">帳票業務の流れをそのままデジタル化</h2>
